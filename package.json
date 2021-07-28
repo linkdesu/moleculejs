@@ -16,20 +16,21 @@
   },
   "files": [
     "/bin",
-    "/lib"
+    "/dist"
   ],
   "bin": {
     "moleculejs": "./bin/run"
   },
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "oclif": {
     "bin": "moleculejs"
   },
-  "types": "lib/index.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -b && oclif-dev readme",
-    "dev": "tsc -w",
+    "dev": "tsc -w -p tsconfig-build.json",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "test:template": "bin/run -i ./test/template-test/schema -f test/template-test/generated-types && eslint --ext .js,.ts --fix test/template-test/generated-types",
     "version": "oclif-dev readme && git add README.md",
     "lint": "eslint --ext .js,.ts --fix src/ test/"
   },
@@ -37,15 +38,19 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^3",
+    "handlebars": "^4.7.7",
+    "lodash": "^4.17.21",
     "tslib": "^1"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
     "@oclif/test": "^1",
     "@types/chai": "^4.2.21",
+    "@types/handlebars": "^4.1.0",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.4.1",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "buffer": "^6.0.3",
     "chai": "^4",
     "eslint": "^7.28.0",
     "eslint-config-standard": "^16.0.3",

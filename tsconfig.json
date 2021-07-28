@@ -3,12 +3,14 @@
     "declaration": true,
     "importHelpers": true,
     "module": "commonjs",
-    "outDir": "lib",
-    "rootDir": "src",
+    "outDir": "dist",
+    "rootDirs": ["src", "test"],
     "strict": true,
-    "target": "es2017"
+    "target": "es2020",
+    "noEmit": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "test/**/*"
   ]
 }
