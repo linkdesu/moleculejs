@@ -29,7 +29,8 @@
   "scripts": {
     "build": "tsc -b && oclif-dev readme",
     "dev": "tsc -w -p tsconfig-build.json",
-    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "test": "env TS_NODE_FILES=true mocha --forbid-only \"test/*.test.ts\"",
+    "test:coverage": "env TS_NODE_FILES=true nyc --extension .ts mocha --forbid-only \"test/*.test.ts\"",
     "test:template": "bin/run -i ./test/template-test/schema -f test/template-test/generated-types && eslint --ext .js,.ts --fix test/template-test/generated-types",
     "version": "oclif-dev readme && git add README.md",
     "lint": "eslint --ext .js,.ts --fix src/ test/"
