@@ -39,7 +39,7 @@ export function isStructToken (token: Token): token is StructToken {
 }
 
 export function isVectorToken (token: Token): token is VectorToken {
-  return token.type === 'fixvec'
+  return token.type === 'fixvec' || token.type === 'dynvec'
 }
 
 export function isTableToken (token: Token): token is TableToken {
@@ -97,6 +97,18 @@ export function improveTypeForToken (token: AnyToken): void {
   }
 }
 
+export function findUsedTypes (token: AnyToken): string[] {
+  if (isArrayToken(token) || isVectorToken(token) || isOptionToken(token)) {
+    return [token.item]
+  } else if (isStructToken(token) || isTableToken(token)) {
+    return token.fields.map(field => field.name)
+  } else if (isUnionToken(token)) {
+    return token.items
+  } else {
+    throw new Error(`Unknown token type, token structure: ${token as string}`)
+  }
+}
+
 /**
  * Improve kinds of type information in abstract-syntax-tree
  *
@@ -104,8 +116,9 @@ export function improveTypeForToken (token: AnyToken): void {
  */
 export function improveTypeForAST (trees: AST[]): void {
   for (const ast of trees) {
+    let typesUsed: string[] = []
     const tokenToRemove: number[] = []
-    const importedTypes: string[] = []
+    let importedTypes: string[] = []
     // Find out imported types and add it to related namespace.
     ast.declarations.forEach((token, i) => {
       if (isNumber(token.imported_depth) && token.imported_depth > 0) {
@@ -113,8 +126,12 @@ export function improveTypeForAST (trees: AST[]): void {
         tokenToRemove.push(i)
       } else {
         improveTypeForToken(token)
+        typesUsed = typesUsed.concat(findUsedTypes(token))
       }
     })
+
+    // Filter really used types from imported types.
+    importedTypes = importedTypes.filter(item => typesUsed.includes(item))
 
     const importedTypesGroups = groupImportTypesBySource(trees, ast.namespace, importedTypes)
     for (const _import of ast.imports) {
@@ -123,8 +140,11 @@ export function improveTypeForAST (trees: AST[]): void {
       }
     }
 
+    // Filter empty imports.
+    ast.imports = ast.imports.filter(item => !isNil(item.types) && item.types.length > 0)
+
     // Remove imported types from current tree.
-    tokenToRemove.forEach(tokenIndex => {
+    tokenToRemove.reverse().forEach(tokenIndex => {
       ast.declarations.splice(tokenIndex, 1)
     })
   }

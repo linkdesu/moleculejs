@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { inspect } from 'util'
 
 import * as util from '../src/util'
 
@@ -156,26 +157,72 @@ describe('util', () => {
   })
 
   describe('improveTypeForAST', () => {
-    const importedNamespace: AST = {
-      namespace: 'basic',
-      imports: [],
-      declarations: [
-        { type: 'array', name: 'Byte2', item: 'byte', item_count: 2 },
-        { type: 'array', name: 'Byte4', item: 'Byte2', item_count: 2 },
-        { type: 'fixvec', name: 'Bytes', item: 'byte' },
-        { type: 'option', name: 'ByteOpt', item: 'byte' },
-        { type: 'option', name: 'BytesOpt', item: 'Bytes' }
-      ]
-    }
+    const trees: AST[] = [
+      {
+        namespace: 'array',
+        imports: [],
+        declarations: [
+          { type: 'array', name: 'Byte3', item: 'byte', item_count: 3 },
+          { type: 'array', name: 'Byte3x3', item: 'Byte3', item_count: 3 }
+        ]
+      },
+      {
+        namespace: 'vector',
+        imports: [ { name: 'array', paths: [], path_supers: 0 } ],
+        declarations: [
+          { type: 'fixvec', name: 'Bytes', item: 'byte' },
+          { type: 'fixvec', name: 'Byte3Vec', item: 'Byte3' },
+          { type: 'dynvec', name: 'BytesVec', item: 'Bytes' },
+          { type: 'array', name: 'Byte3', item: 'byte', item_count: 3, imported_depth: 1 },
+          { type: 'array', name: 'Byte3x3', item: 'Byte3', item_count: 3, imported_depth: 1 }
+        ]
+      },
+      {
+        namespace: 'option',
+        imports: [ { name: 'vector', paths: [], path_supers: 0 } ],
+        declarations: [
+          { type: 'option', name: 'ByteOpt', item: 'byte' },
+          { type: 'option', name: 'Byte3Opt', item: 'Byte3' },
+          { type: 'option', name: 'BytesOpt', item: 'Bytes' },
+          { type: 'fixvec', name: 'Bytes', item: 'byte', imported_depth: 1 },
+          {
+            type: 'fixvec',
+            name: 'Byte3Vec',
+            item: 'Byte3',
+            imported_depth: 1
+          },
+          {
+            type: 'dynvec',
+            name: 'BytesVec',
+            item: 'Bytes',
+            imported_depth: 1
+          },
+          {
+            type: 'array',
+            name: 'Byte3',
+            item: 'byte',
+            item_count: 3,
+            imported_depth: 1
+          },
+          {
+            type: 'array',
+            name: 'Byte3x3',
+            item: 'Byte3',
+            item_count: 3,
+            imported_depth: 1
+          }
+        ]
+      }
+    ]
 
     it('should add fields for details of imported types', () => {
-      util.improveTypeForAST([importedNamespace, ast])
-      expect(ast.imports[0]).to.eql({
-        name: 'basic',
-        paths: [],
-        path_supers: 0,
-        types: ['Byte2', 'Byte4', 'Bytes', 'ByteOpt', 'BytesOpt']
-      })
+      util.improveTypeForAST(trees)
+      expect(trees[1].imports[0].hasOwnProperty('types')).to.equal(true)
+    })
+
+    it('should only import types used', () => {
+      util.improveTypeForAST(trees)
+      expect(trees[1].imports[0]).to.eql({ name: 'array', paths: [], path_supers: 0, types: [ 'Byte3' ] })
     })
   })
 })

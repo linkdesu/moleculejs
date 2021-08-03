@@ -61,13 +61,13 @@ class MoleculeJS extends Command {
         try {
           await util.isDirectoryWritable(outputPackage)
         } catch (e) {
-          this.error(`Output directory is not writable: ${e.toString()}`, { exit: 3 })
+          this.error(`Output directory is not writable: ${e.toString() as string}`, { exit: 3 })
         }
       } else if (!isNil(outputFiles)) {
         try {
           await util.isDirectoryWritable(outputFiles)
         } catch (e) {
-          this.error(`Output directory is not writable: ${e.toString()}`, { exit: 3 })
+          this.error(`Output directory is not writable: ${e.toString() as string}`, { exit: 3 })
         }
       } else {
         this.error('One of --output-package and output-files is required.', { exit: 3 })
@@ -106,6 +106,7 @@ class MoleculeJS extends Command {
       util.improveTypeForAST(trees)
 
       this.log('Improve AST successfully!')
+      // console.log('Improved asts:', inspect(trees, false, 4, true))
 
       const codes = [
         {
