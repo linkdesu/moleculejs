@@ -1,0 +1,8 @@
+import array;
+
+struct StructA {
+    f1: byte,
+    f2: byte,
+    f3: Byte3,
+    f4: Byte3,
+}

@@ -1,0 +1,2 @@
+array Byte3 [byte; 3];
+array Byte3x3 [Byte3; 3];

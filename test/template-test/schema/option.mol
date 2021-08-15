@@ -1,0 +1,6 @@
+import array;
+import vector;
+
+option ByteOpt (byte);
+option Byte3Opt (Byte3);
+option BytesOpt (Bytes);

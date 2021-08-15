@@ -1,0 +1,10 @@
+import array;
+import vector;
+import struct_;
+
+table TableA {
+    f1: byte,
+    f2: Byte3,
+    f3: Bytes,
+    f4: StructA,
+}
