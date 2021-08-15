@@ -159,6 +159,36 @@ describe('util', () => {
   describe('improveTypeForAST', () => {
     const trees: AST[] = [
       {
+        namespace: 'struct',
+        imports: [ { name: 'array', paths: [], path_supers: 0 } ],
+        declarations: [
+          {
+            type: 'struct',
+            name: 'StructA',
+            fields: [
+              { name: 'f1', type: 'byte' },
+              { name: 'f2', type: 'byte' },
+              { name: 'f3', type: 'Byte3' },
+              { name: 'f4', type: 'Byte3' }
+            ]
+          },
+          {
+            type: 'array',
+            name: 'Byte3',
+            item: 'byte',
+            item_count: 3,
+            imported_depth: 1
+          },
+          {
+            type: 'array',
+            name: 'Byte3x3',
+            item: 'Byte3',
+            item_count: 3,
+            imported_depth: 1
+          }
+        ]
+      },
+      {
         namespace: 'array',
         imports: [],
         declarations: [
@@ -217,12 +247,17 @@ describe('util', () => {
 
     it('should add fields for details of imported types', () => {
       util.improveTypeForAST(trees)
-      expect(trees[1].imports[0].hasOwnProperty('types')).to.equal(true)
+      expect(trees[2].imports[0].hasOwnProperty('types')).to.equal(true)
     })
 
     it('should only import types used', () => {
       util.improveTypeForAST(trees)
-      expect(trees[1].imports[0]).to.eql({ name: 'array', paths: [], path_supers: 0, types: [ 'Byte3' ] })
+      expect(trees[2].imports[0]).to.eql({ name: 'array', paths: [], path_supers: 0, types: [ 'Byte3' ] })
+    })
+
+    it('should improve imports of structA correctly', () => {
+      util.improveTypeForAST(trees)
+      expect(trees[0].imports.length).to.gt(0)
     })
   })
 })

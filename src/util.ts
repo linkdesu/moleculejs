@@ -101,7 +101,7 @@ export function findUsedTypes (token: AnyToken): string[] {
   if (isArrayToken(token) || isVectorToken(token) || isOptionToken(token)) {
     return [token.item]
   } else if (isStructToken(token) || isTableToken(token)) {
-    return token.fields.map(field => field.name)
+    return token.fields.map(field => field.type)
   } else if (isUnionToken(token)) {
     return token.items
   } else {
@@ -116,6 +116,7 @@ export function findUsedTypes (token: AnyToken): string[] {
  */
 export function improveTypeForAST (trees: AST[]): void {
   for (const ast of trees) {
+    // console.log('ast.namespace:', ast.namespace)
     let typesUsed: string[] = []
     const tokenToRemove: number[] = []
     let importedTypes: string[] = []
@@ -132,8 +133,10 @@ export function improveTypeForAST (trees: AST[]): void {
 
     // Filter really used types from imported types.
     importedTypes = importedTypes.filter(item => typesUsed.includes(item))
+    // console.log('importedTypes:', importedTypes)
 
     const importedTypesGroups = groupImportTypesBySource(trees, ast.namespace, importedTypes)
+    // console.log('importedTypesGroups:', importedTypesGroups)
     for (const _import of ast.imports) {
       if (Object.prototype.hasOwnProperty.call(importedTypesGroups, _import.name)) {
         _import.types = importedTypesGroups[_import.name]
@@ -159,7 +162,7 @@ function groupImportTypesBySource (trees: AST[], currentNamespace: string, impor
     }
 
     for (const token of ast.declarations) {
-      if (importedTypes.includes(token.name)) {
+      if (importedTypes.includes(token.name) && isNil(token.imported_depth)) {
         if (!Object.prototype.hasOwnProperty.call(groups, ast.namespace)) {
           groups[ast.namespace] = []
         }

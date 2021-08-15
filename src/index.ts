@@ -93,7 +93,7 @@ class MoleculeJS extends Command {
             }
 
             this.log(`Compile file ${filepath} successfully!`)
-            console.log('Original ast:', inspect(ast, false, 4, true))
+            // console.log('Original ast:', inspect(ast, false, 4, true))
 
             resolve(ast)
           })
