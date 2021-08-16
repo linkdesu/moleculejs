@@ -3,6 +3,7 @@ import { isNil, isEmpty } from 'lodash'
 import { promises as fs } from 'fs'
 import * as path from 'path'
 import { exec } from 'child_process'
+import { ESLint } from 'eslint'
 import { inspect } from 'util'
 
 import * as util from './util'
@@ -20,7 +21,7 @@ class MoleculeJS extends Command {
     version: flags.version({ char: 'v' }),
     help: flags.help({ char: 'h' }),
     test: flags.boolean({ char: 't' }),
-    moleculec: flags.string({ char: 'm', description: 'The path of executable moleculec, if it not provided the internal binary will be used.' }),
+    moleculec: flags.string({ char: 'm', description: 'The absolute path of executable moleculec, if it not provided the internal binary will be used.' }),
     'input-dir': flags.string({ char: 'i', required: true, description: 'Specifies a directory which contains molecule schema files.' }),
     'output-package': flags.string({ char: 'p', exclusive: ['output-files'], description: 'Specifies a directory to store the generated typescript package.' }),
     'output-files': flags.string({ char: 'f', exclusive: ['output-package'], description: 'Specifies a directory to store the generated typescript files.' })
@@ -121,14 +122,24 @@ class MoleculeJS extends Command {
         })
       }
 
+      // Initialize eslint for formatting generated codes
+      const eslint = new ESLint({ fix: true, overrideConfigFile: path.join(path.dirname(__dirname), '.eslintrc.js') })
+
       if (!isNil(outputPackage)) {
         // TODO
       } else if (!isNil(outputFiles)) {
         for (const { filename, code } of codes) {
           const filepath = path.join(outputFiles, filename + '.ts')
-          fs.writeFile(filepath, code).catch(err => {
-            this.error(`Write code to file ${filepath} failed: ${err.toString() as string}`, { exit: 2 })
-          })
+
+          fs.writeFile(filepath, code)
+            .then(async () => {
+              // Format generated codes with eslint
+              const results = await eslint.lintFiles(filepath)
+              await ESLint.outputFixes(results)
+            })
+            .catch(err => {
+              this.error(`Write code to file ${filepath} failed: ${err.toString() as string}`, { exit: 2 })
+            })
         }
       }
     } catch (e) {
