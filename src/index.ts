@@ -11,16 +11,16 @@ import { Template } from './template'
 
 class MoleculeJS extends Command {
   static description = 'A typescript implementation for @nervosnetwork/molecule which is a compiler for serializing structured binary data on a blockchain named CKB.'
-  static usage = 'moleculejs -i <path_of_json_inputs> -o <path_of_ts_outputs>'
+  static usage = '-i <path_of_schema_inputs> -f <path_of_ts_outputs>'
   static examples = [
-    '$ moleculejs -i das-types/schemas/ -o das-types/es/src/schemas/'
+    '$ moleculejs -i das-types/schemas/ -f das-types/es/src/schemas/'
   ]
 
   static flags = {
     // add --version flag to show CLI version
     version: flags.version({ char: 'v' }),
     help: flags.help({ char: 'h' }),
-    test: flags.boolean({ char: 't' }),
+    test: flags.boolean({ char: 't', description: 'Turn on test mode for unit tests.' }),
     moleculec: flags.string({ char: 'm', description: 'The absolute path of executable moleculec, if it not provided the internal binary will be used.' }),
     'input-dir': flags.string({ char: 'i', required: true, description: 'Specifies a directory which contains molecule schema files.' }),
     'output-package': flags.string({ char: 'p', exclusive: ['output-files'], description: 'Specifies a directory to store the generated typescript package.' }),

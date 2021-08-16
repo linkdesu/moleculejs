@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 
-require('../lib').run()
+require('../dist').run()
 .catch(require('@oclif/errors/handle'))

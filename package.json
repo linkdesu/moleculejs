@@ -8,6 +8,7 @@
     "ckb",
     "nervosnetwork"
   ],
+  "description": "A typescript implementation for @nervosnetwork/molecule which is a compiler for serializing structured binary data on a blockchain named CKB.",
   "license": "MIT",
   "repository": "linkdesu/moleculejs",
   "bugs": "https://github.com/linkdesu/moleculejs/issues",
@@ -15,52 +16,59 @@
     "node": ">=14.0.0"
   },
   "files": [
-    "/bin",
-    "/dist"
+    "bin",
+    "moleculec",
+    "dist",
+    ".eslintignore",
+    ".eslintrc.js"
   ],
-  "bin": {
-    "moleculejs": "./bin/run"
-  },
+  "bin": "./bin/run",
   "main": "dist/index.js",
   "oclif": {
     "bin": "moleculejs"
   },
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -b && oclif-dev readme",
-    "dev": "tsc -w -p tsconfig-build.json",
-    "test": "env TS_NODE_FILES=true mocha --forbid-only \"test/*.test.ts\"",
-    "test:coverage": "env TS_NODE_FILES=true nyc --extension .ts mocha --forbid-only \"test/*.test.ts\"",
-    "test:template": "bin/run -i ./test/template-test/schema -f test/template-test/generated-types && eslint --ext .js,.ts --fix test/template-test/generated-types",
-    "version": "oclif-dev readme && git add README.md",
-    "lint": "eslint --ext .js,.ts --fix src/ test/"
+    "build": "rimraf -g 'dist/*' && tsc --build tsconfig-build.json",
+    "dev": "tsc --watch --project tsconfig-build.json",
+    "pretest": "yarn test:template",
+    "test": "env TS_NODE_FILES=true mocha --parallel \"./test/**/*.test.ts\"",
+    "test:coverage": "env TS_NODE_FILES=true nyc --extension .ts mocha --parallel \"./test/**/*.test.ts\"",
+    "test:template": "bin/run -i ./test/template-test/schema -f test/template-test/generated-types",
+    "lint": "eslint --ext .js,.ts --fix src/ test/",
+    "release": "standard-version"
   },
   "dependencies": {
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^3",
-    "handlebars": "^4.7.7",
-    "lodash": "^4.17.21",
-    "tslib": "^1"
-  },
-  "devDependencies": {
-    "@oclif/dev-cli": "^1",
-    "@oclif/test": "^1",
-    "@types/chai": "^4.2.21",
-    "@types/handlebars": "^4.1.0",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^16.4.1",
-    "@typescript-eslint/eslint-plugin": "^4.28.4",
-    "buffer": "^6.0.3",
-    "chai": "^4",
+    "chalk": "^4.1.1",
+    "cli-ux": "^5.6.3",
     "eslint": "^7.28.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-config-standard-with-typescript": "^20.0.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
+    "handlebars": "^4.7.7",
+    "lodash": "^4.17.21",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1",
+    "@oclif/test": "^1",
+    "@types/chai": "^4.2.21",
+    "@types/eslint": "^7.28.0",
+    "@types/handlebars": "^4.1.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.4.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "buffer": "^6.0.3",
+    "chai": "^4",
     "mocha": "^9.0.2",
     "nyc": "^15.1.0",
+    "rimraf": "^3.0.2",
+    "standard-version": "^9.3.1",
     "ts-node": "^10.1.0",
     "typescript": "^4.3.5"
   }
