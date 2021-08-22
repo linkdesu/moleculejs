@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/linkdesu/moleculejs/compare/v1.0.0...v1.1.0) (2021-08-22)
+
+
+### Features
+
+* allow downloading moleculec after npm install ([b957616](https://github.com/linkdesu/moleculejs/commit/b95761696bb956c2059a07a3adaecd1335ee28e3))
+
 ## 1.0.0 (2021-08-16)
 
 
