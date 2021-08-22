@@ -3,23 +3,51 @@ import * as path from 'path'
 import { constants as fs_const, promises as fs } from 'fs'
 import { isNil, isNumber } from 'lodash'
 
-import { BUFFER_TYPE, BYTE_TYPE } from './const'
+import { BUFFER_TYPE, BYTE_TYPE, Platform } from './const'
+
+export function getPlatform (): Platform | null {
+  switch (`${os.platform()}_${os.arch()}`) {
+    case 'linux_x64':
+      return Platform.LinuxX64
+    case 'darwin_x64':
+      return Platform.DarwinX64
+    default:
+      return null
+  }
+}
 
 export function getMoleculec (): string {
   let binPath = path.join(path.dirname(__dirname), 'moleculec')
 
-  switch (os.platform()) {
-    case 'darwin':
-      binPath = path.join(binPath, 'moleculec-darwin')
-      break
-    case 'linux':
+  switch (getPlatform()) {
+    case Platform.LinuxX64:
       binPath = path.join(binPath, 'moleculec-linux')
       break
+    case Platform.DarwinX64:
+      binPath = path.join(binPath, 'moleculec-darwin')
+      break
     default:
-      throw new Error('Unsupported platform')
+      throw new Error('Sorry, moleculejs only has prebuilt moleculec for linux_x64 and darwin_x64 platforms, it is welcome that anyone provide supporting for more platforms.')
   }
 
   return binPath
+}
+
+export function getDownloadFrom (): string {
+  let url = 'https://github.com/linkdesu/moleculejs/releases/download/v1.0.0/'
+
+  switch (getPlatform()) {
+    case Platform.LinuxX64:
+      url += 'moleculec-linux'
+      break
+    case Platform.DarwinX64:
+      url += 'moleculec-darwin'
+      break
+    default:
+      throw new Error('Sorry, moleculejs only has prebuilt moleculec for linux_x64 and darwin_x64 platforms, it is welcome that anyone provide supporting for more platforms.')
+  }
+
+  return url
 }
 
 export async function isDirectoryWritable (path: string): Promise<void> {
