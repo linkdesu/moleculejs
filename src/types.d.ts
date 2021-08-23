@@ -19,11 +19,13 @@ interface Token {
   type: string
   name: string
   imported_depth?: number
+  is_option?: boolean
 }
 
 interface TokenField {
   name: string
   type: string
+  is_option?: boolean
 }
 
 interface ArrayToken extends Token {

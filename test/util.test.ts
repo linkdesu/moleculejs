@@ -242,7 +242,33 @@ describe('util', () => {
             imported_depth: 1
           }
         ]
-      }
+      },
+      {
+        namespace: 'vector_opt',
+        imports: [ { name: 'option', paths: [], path_supers: 0 } ],
+        declarations: [
+          { type: 'dynvec', name: 'BytesOptVec', item: 'BytesOpt' },
+          { type: 'option', name: 'BytesOpt', item: 'Bytes', imported_depth: 1 }
+        ]
+      },
+      {
+        namespace: 'table_opt',
+        imports: [ { name: 'option', paths: [], path_supers: 0 } ],
+        declarations: [
+          {
+            type: 'table',
+            name: 'TableA',
+            fields: [
+              { name: 'f1', type: 'byte' },
+              { name: 'f2', type: 'ByteOpt' },
+              { name: 'f3', type: 'Bytes' },
+              { name: 'f4', type: 'BytesOpt' }
+            ]
+          },
+          { type: 'option', name: 'ByteOpt', item: 'Bytes', imported_depth: 1 },
+          { type: 'option', name: 'BytesOpt', item: 'Bytes', imported_depth: 1 }
+        ]
+      },
     ]
 
     it('should add fields for details of imported types', () => {
@@ -258,6 +284,25 @@ describe('util', () => {
     it('should improve imports of structA correctly', () => {
       util.improveTypeForAST(trees)
       expect(trees[0].imports.length).to.gt(0)
+    })
+
+    it('should add option identifier to vector correctly', () => {
+      util.improveTypeForAST(trees)
+      expect(trees[4].declarations[0]).to.eql({ type: 'dynvec', name: 'BytesOptVec', item: 'BytesOpt', is_option: true })
+    })
+
+    it('should add option identifier to table correctly', () => {
+      util.improveTypeForAST(trees)
+      expect(trees[5].declarations[0]).to.eql({
+        type: 'table',
+        name: 'TableA',
+        fields: [
+          { name: 'f1', type: 'Buffer' },
+          { name: 'f2', type: 'ByteOpt', is_option: true },
+          { name: 'f3', type: 'Bytes' },
+          { name: 'f4', type: 'BytesOpt', is_option: true }
+        ]
+      })
     })
   })
 })

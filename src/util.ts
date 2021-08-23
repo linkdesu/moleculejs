@@ -146,6 +146,7 @@ export function improveTypeForAST (trees: AST[]): void {
   for (const ast of trees) {
     // console.log('ast.namespace:', ast.namespace)
     let typesUsed: string[] = []
+    const optionTypes: string[] = []
     const tokenToRemove: number[] = []
     let importedTypes: string[] = []
     // Find out imported types and add it to related namespace.
@@ -156,6 +157,10 @@ export function improveTypeForAST (trees: AST[]): void {
       } else {
         improveTypeForToken(token)
         typesUsed = typesUsed.concat(findUsedTypes(token))
+      }
+
+      if (isOptionToken(token)) {
+        optionTypes.push(token.name)
       }
     })
 
@@ -177,6 +182,20 @@ export function improveTypeForAST (trees: AST[]): void {
     // Remove imported types from current tree.
     tokenToRemove.reverse().forEach(tokenIndex => {
       ast.declarations.splice(tokenIndex, 1)
+    })
+
+    ast.declarations.forEach(token => {
+      if (isVectorToken(token)) {
+        if (optionTypes.includes(token.item)) {
+          token.is_option = true
+        }
+      } else if (isTableToken(token)) {
+        token.fields.forEach(field => {
+          if (optionTypes.includes(field.type)) {
+            field.is_option = true
+          }
+        })
+      }
     })
   }
 }
