@@ -3,7 +3,7 @@ import * as path from 'path'
 import { constants as fs_const, promises as fs } from 'fs'
 import { isNil, isNumber } from 'lodash'
 
-import { BUFFER_TYPE, BYTE_TYPE, Platform } from './const'
+import { BUFFER_TYPE, BYTE_TYPE, Platform, TYPESCRIPT_KEYWORDS } from './const'
 
 export function getPlatform (): Platform | null {
   switch (`${os.platform()}_${os.arch()}`) {
@@ -112,6 +112,9 @@ export function improveTypeForToken (token: AnyToken): void {
     for (const field of token.fields) {
       if (field.type === BYTE_TYPE) {
         field.type = BUFFER_TYPE
+      }
+      if (TYPESCRIPT_KEYWORDS.includes(field.name)) {
+        field.name += '_'
       }
     }
   } else if (isUnionToken(token)) {

@@ -42,6 +42,13 @@ moleculejs -i <path_of_schema_inputs> -f <path_of_ts_outputs>
 
 > For more options please try `moleculejs -h` .
 
+### Typescript Keywords
+
+Here we have a simple convention which the name of types must be **PascalCase**, so moleculejs will not rename any of type's name. 
+But if any field of struct or table conflict with typescript keywords, then moleculejs will add a underline at the end of it. 
+
+For example: `new` will be rename to `new_` .
+
 
 ## TODO
 

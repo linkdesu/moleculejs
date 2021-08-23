@@ -84,7 +84,8 @@ describe('util', () => {
         { name: 'f1', type: 'byte' },
         { name: 'f2', type: 'byte' },
         { name: 'f3', type: 'Byte2' },
-        { name: 'f4', type: 'Byte2' }
+        { name: 'f4', type: 'Byte2' },
+        { name: 'new', type: 'Byte2' }
       ]
     }
     const tableToken: TableToken = {
@@ -94,7 +95,8 @@ describe('util', () => {
         { name: 'f1', type: 'byte' },
         { name: 'f2', type: 'byte' },
         { name: 'f3', type: 'Byte2' },
-        { name: 'f4', type: 'Bytes' }
+        { name: 'f4', type: 'Bytes' },
+        { name: 'function', type: 'Bytes' }
       ]
     }
     const unionToken: UnionToken = {
@@ -127,7 +129,8 @@ describe('util', () => {
           { name: 'f1', type: 'Buffer' },
           { name: 'f2', type: 'Buffer' },
           { name: 'f3', type: 'Byte2' },
-          { name: 'f4', type: 'Byte2' }
+          { name: 'f4', type: 'Byte2' },
+          { name: 'new_', type: 'Byte2' }
         ]
       })
     })
@@ -141,7 +144,8 @@ describe('util', () => {
           { name: 'f1', type: 'Buffer' },
           { name: 'f2', type: 'Buffer' },
           { name: 'f3', type: 'Byte2' },
-          { name: 'f4', type: 'Bytes' }
+          { name: 'f4', type: 'Bytes' },
+          { name: 'function_', type: 'Bytes' }
         ]
       })
     })
