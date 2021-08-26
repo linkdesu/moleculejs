@@ -215,7 +215,7 @@ export class Template {
   }
 
   genModule (ast: AST): string {
-    console.log('Will compile ast:', inspect(ast, false, 4, true))
+    // console.log('Will compile ast:', inspect(ast, false, 4, true))
     return this.compiler(ast)
   }
 }

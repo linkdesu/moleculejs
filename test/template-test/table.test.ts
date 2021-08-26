@@ -37,7 +37,7 @@ describe('table', () => {
       expect(tableA.f1.equals(Buffer.from('01', 'hex'))).to.equal(true)
       expect(tableA.f2.equal(Byte3.fromString('111111'))).to.equal(true)
       expect(tableA.f3.equal(Bytes.fromString('03000000112233'))).to.equal(true)
-      expect(tableA.f4.equal(StructA.fromString('0102111111222222'))).to.equal(true)
+      expect(tableA.function_.equal(StructA.fromString('0102111111222222'))).to.equal(true)
 
       const buf = Buffer.from('01111111030000001122330102111111222222', 'hex')
       expect(tableA.toRawData().equals(buf)).to.equal(true)

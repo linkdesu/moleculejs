@@ -8,11 +8,11 @@ describe('vector', () => {
     it('should support decoding / encoding default', () => {
       // 0x00000000
       const hex = '00000000'
-      const structADefault = Bytes.fromBuffer()
-      const structA = Bytes.fromString(hex)
+      const bytesDefault = Bytes.fromBuffer()
+      const bytes = Bytes.fromString(hex)
 
-      expect(structA.equal(structADefault)).to.equal(true)
-      expect(structADefault.toHex()).to.equal(hex)
+      expect(bytes.equal(bytesDefault)).to.equal(true)
+      expect(bytesDefault.toHex()).to.equal(hex)
     })
   })
 
@@ -44,23 +44,23 @@ describe('vector', () => {
     const buf = Buffer.from(hex, 'hex')
 
     it('should support decoding data', () => {
-      const byte3s = Byte3Vec.fromString(hex)
-      expect(byte3s.toBuffer().equals(buf)).to.equal(true)
+      const byte3Vec = Byte3Vec.fromString(hex)
+      expect(byte3Vec.toBuffer().equals(buf)).to.equal(true)
     })
 
     it('should support encoding data', () => {
-      const byte3s = Byte3Vec.fromString(hex)
+      const byte3Vec = Byte3Vec.fromString(hex)
 
-      const items = byte3s.items
+      const items = byte3Vec.items
       expect(items[0].equal(Byte3.fromString('000000'))).to.equal(true)
       expect(items[1].equal(Byte3.fromString('111111'))).to.equal(true)
       expect(items[2].equal(Byte3.fromString('222222'))).to.equal(true)
 
       const buf = Buffer.from('000000111111222222', 'hex')
-      expect(byte3s.toRawData().equals(buf)).to.equal(true)
+      expect(byte3Vec.toRawData().equals(buf)).to.equal(true)
 
-      expect(byte3s.count).to.equal(3)
-      expect(byte3s.size).to.equal(13)
+      expect(byte3Vec.count).to.equal(3)
+      expect(byte3Vec.size).to.equal(13)
     })
   })
 

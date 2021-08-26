@@ -15,6 +15,8 @@ describe('option', () => {
       expect(byte3Opt.isSome()).to.equal(false)
       expect(byte3Opt.isNone()).to.equal(true)
       expect(byte3OptDefault.toHex()).to.equal(hex)
+      expect(byte3Opt.size).to.equal(0)
+      expect(byte3OptDefault.size).to.equal(0)
     })
   })
 
@@ -23,11 +25,20 @@ describe('option', () => {
     const hex = '111111'
     const buf = Buffer.from(hex, 'hex')
 
+    it('should support Buffer correctly', () => {
+      const byte3Opt = Byte3Opt.fromBuffer()
+      expect(byte3Opt.size).to.equal(0)
+
+      const byteOpt = ByteOpt.fromBuffer()
+      expect(byteOpt.size).to.equal(0)
+    })
+
     it('should support serialize data', () => {
       const byte3Opt = Byte3Opt.fromString(hex)
       expect(byte3Opt.isSome()).to.equal(true)
       expect(byte3Opt.isNone()).to.equal(false)
       expect(byte3Opt.toBuffer()?.equals(buf)).to.equal(true)
+      expect(byte3Opt.size).to.equal(3)
     })
 
     it('should support deserialize data', () => {
@@ -49,6 +60,7 @@ describe('option', () => {
       expect(bytesOpt.isSome()).to.equal(true)
       expect(bytesOpt.isNone()).to.equal(false)
       expect(bytesOpt.toBuffer()?.equals(buf)).to.equal(true)
+      expect(bytesOpt.size).to.equal(7)
     })
 
     it('should support deserialize data', () => {
