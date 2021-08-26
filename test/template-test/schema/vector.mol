@@ -1,0 +1,5 @@
+import array;
+
+vector Bytes <byte>;
+vector Byte3Vec <Byte3>;
+vector BytesVec <Bytes>;

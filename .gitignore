@@ -1,8 +1,10 @@
-*-debug.log
-*-error.log
 /.nyc_output
 /dist
+/moleculec
 /lib
 /package-lock.json
 /tmp
 node_modules
+.yarn/
+*-debug.log
+*-error.log

@@ -1,0 +1,10 @@
+import array;
+import vector;
+import option;
+
+table TableAOpt {
+    f1: byte,
+    f2: ByteOpt,
+    f3: Bytes,
+    f4: BytesOpt,
+}

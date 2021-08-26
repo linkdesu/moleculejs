@@ -1,32 +1,59 @@
-moleculejs
-==========
+# moleculejs
+
+[![License](https://img.shields.io/github/license/linkdesu/moleculejs)](https://github.com/linkdesu/moleculejs/blob/develop/LICENSE)
+[![License](https://img.shields.io/github/package-json/v/linkdesu/moleculejs)](https://github.com/linkdesu/moleculejs/releases)
+
+This is command line tool for serializing structured binary data. It is implemented via typescript with a prebuilt `moleculec` 
+as dependency. `moleculec` is an official compiler for molecule schema, its repository is [@nervosnetwork/molecule](https://github.com/nervosnetwork/molecule).
+You may get the detailed encoding spec in there.
 
 
+## Installation
 
-[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/moleculejs.svg)](https://npmjs.org/package/moleculejs)
-[![Downloads/week](https://img.shields.io/npm/dw/moleculejs.svg)](https://npmjs.org/package/moleculejs)
-[![License](https://img.shields.io/npm/l/moleculejs.svg)](https://github.com/linkdesu/moleculejs/blob/master/package.json)
+The recommended way is installing as global package, then you may use the command `moleculejs` wherever you want.
 
-<!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
-<!-- tocstop -->
-# Usage
-<!-- usage -->
-```sh-session
-$ npm install -g moleculejs
-$ moleculejs COMMAND
-running command...
-$ moleculejs (-v|--version|version)
-moleculejs/0.0.0 darwin-x64 node-v16.3.0
-$ moleculejs --help [COMMAND]
-USAGE
-  $ moleculejs COMMAND
-...
+```bash
+npm i -g @linkdesu/moleculejs
 ```
-<!-- usagestop -->
-# Commands
-<!-- commands -->
 
-<!-- commandsstop -->
+After package installed, you need to download `moleculec` manually, with the following command:
+
+```bash
+moleculejs -d
+```
+
+⚠️ Download prebuilt from untrusted source is really dangerous, so I also provide a option to download from a custom source:
+
+```bash
+moleculejs -d --download-from https://url_to_a_prebuilt_moleculec
+```
+
+
+## Usage
+
+- First, write molecule schema files with `.mol` suffix.
+- Then, select a directory to store output typescript files.
+
+Now, you could start compiling with the following commands:
+
+```bash
+moleculejs -i <path_of_schema_inputs> -f <path_of_ts_outputs>
+```
+
+> For more options please try `moleculejs -h` .
+
+### Typescript Keywords
+
+Here we have a simple convention which the name of types must be **PascalCase**, so moleculejs will not rename any of type's name. 
+But if any field of struct or table conflict with typescript keywords, then moleculejs will add a underline at the end of it. 
+
+For example: `new` will be rename to `new_` .
+
+
+## TODO
+
+- [ ] Add github workflow as ci process.
+- [ ] Implement unit tests from [nervosnetwork/molecule](https://github.com/nervosnetwork/molecule/tree/master/test).
+- [ ] Support customizable eslint configs.
+- [ ] Improve console messages for a better experience.
+- [ ] Support [Union](https://github.com/nervosnetwork/molecule/blob/master/docs/encoding_spec.md#union) data type.
