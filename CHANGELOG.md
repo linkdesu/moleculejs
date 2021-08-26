@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/linkdesu/moleculejs/compare/v1.1.0...v1.1.1) (2021-08-26)
+
+
+### Bug Fixes
+
+* add identifiers for option types into AST ([5c63c2d](https://github.com/linkdesu/moleculejs/commit/5c63c2d1591156f9f2ae1dedcf3c69eebddbe26f))
+* rename fields of struct and table if it is typescript keywords ([beba953](https://github.com/linkdesu/moleculejs/commit/beba9533b5802183b63515b724c41ee572e24f8c))
+* support option correctly in vector and table ([e0ba861](https://github.com/linkdesu/moleculejs/commit/e0ba8612d1a9431c8525a5e6e8e7a10e3bc29531))
+
 ## [1.1.0](https://github.com/linkdesu/moleculejs/compare/v1.0.0...v1.1.0) (2021-08-22)
 
 
