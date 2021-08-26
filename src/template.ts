@@ -150,13 +150,22 @@ Handlebars.registerHelper('table-of-fields', function (this: any, bufName: strin
       code += `end = ${bufName}.length\n`
     }
     if (field.type === 'Buffer') {
-      code += `fields.${field.name} = ${bufName}.slice(start, end)\n`
+      code += `fields.${field.name} = end > start ? ${bufName}.slice(start, end) : Buffer.alloc(0)\n`
     } else {
-      code += `fields.${field.name} = ${field.type}.fromBuffer(buf.slice(start, end))\n`
+      code += `fields.${field.name} = end > start ? ${field.type}.fromBuffer(buf.slice(start, end)) : ${field.type}.fromBuffer()\n`
     }
   }
 
   return code
+})
+
+Handlebars.registerHelper('has-option-fields', function (this: any, fields: TokenField[]) {
+  // console.log('fields:', fields)
+  for (const field of fields) {
+    if (!isNil(field.is_option) && field.is_option) {
+      return true
+    }
+  }
 })
 
 Handlebars.registerHelper('is-equal', function (this: any, exprA: any, exprB: any) {
@@ -206,7 +215,7 @@ export class Template {
   }
 
   genModule (ast: AST): string {
-    // console.log('Will compile ast:', inspect(ast, false, 4, true))
+    console.log('Will compile ast:', inspect(ast, false, 4, true))
     return this.compiler(ast)
   }
 }

@@ -15,11 +15,19 @@ export class {{ name }} extends OptionEntity<{{ item }}> {
     }
   }
 
-  item: {{item}} | null
+  item: {{ item }} | null
 
   constructor (item?: {{ item }}) {
     super()
     this.item = item == null ? null : item
+  }
+
+  get size (): number {
+    {{#if (is-equal item 'Buffer')}}
+      return this.item != null ? this.item.length : 0
+    {{else}}
+      return this.item != null ? this.item.size : 0
+    {{/if}}
   }
 
   toBuffer (): Buffer | null {
@@ -48,6 +56,18 @@ export class {{ name }} extends OptionEntity<{{ item }}> {
 
   isNone (): boolean {
     return this.item == null
+  }
+
+  equal (target: {{ name }}): boolean {
+    if (this.item == null || target.item == null) {
+      return false
+    } else {
+      {{#if (is-equal item 'Buffer')}}
+        return this.item.equals(target.item)
+      {{else}}
+        return this.item.equal(target.item)
+      {{/if}}
+    }
   }
 }`
 }

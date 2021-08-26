@@ -42,8 +42,7 @@ export class {{ name }} extends Entity {
   }
 
   get offsets (): number[] {
-    let header = uint32Length * (1 + {{fields.length}})
-    let start = header
+    let start = uint32Length * (1 + {{fields.length}})
     let offsets: number[] = []
 
     {{#each fields}}
@@ -76,7 +75,7 @@ export class {{ name }} extends Entity {
       start += uint32Length
     })
 
-    let bufs: Buffer[] = []
+    let bufs = []
     {{#each fields}}
       {{#if (is-equal type 'Buffer')}}
         bufs.push(this._{{ name }})
@@ -85,7 +84,11 @@ export class {{ name }} extends Entity {
       {{/if}}
     {{/each}}
 
+    {{#if (has-option-fields fields)}}
+    return Buffer.concat([header, ...bufs.filter(item => item != null) as Buffer[]])
+    {{else}}
     return Buffer.concat([header, ...bufs])
+    {{/if}}
   }
 
   toRawData (): Buffer {
@@ -99,7 +102,11 @@ export class {{ name }} extends Entity {
       {{/each}}
     ]
 
+    {{#if (has-option-fields fields)}}
+    return Buffer.concat(bufs.filter(item => item != null) as Buffer[])
+    {{else}}
     return Buffer.concat(bufs)
+    {{/if}}
   }
 
   toString (): string {

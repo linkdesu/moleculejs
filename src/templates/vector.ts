@@ -87,8 +87,7 @@ export class {{ name }} extends Entity {
     {{#if (is-equal type 'fixvec')}}
       return []
     {{else}}
-      let header = uint32Length * (1 + this.items.length)
-      let start = header
+      let start = uint32Length * (1 + this.items.length)
       let offsets: number[] = []
       this.items.forEach(item => {
         offsets.push(start)
@@ -116,7 +115,12 @@ export class {{ name }} extends Entity {
         header.writeUInt32LE(item, start)
         start += uint32Length
       })
+
+      {{#if (is-equal is_option true)}}
+      let bufs = this.items.map(item => item.toBuffer()).filter(item => item != null) as Buffer[]
+      {{else}}
       let bufs = this.items.map(item => item.toBuffer())
+      {{/if}}
       return Buffer.concat([header, ...bufs])
     {{/if}}
   }
@@ -130,7 +134,11 @@ export class {{ name }} extends Entity {
         return Buffer.concat(bufs)
       {{/if}}
     {{else}}
+      {{#if (is-equal is_option true)}}
+      let bufs = this.items.map(item => item.toBuffer()).filter(item => item != null) as Buffer[]
+      {{else}}
       let bufs = this.items.map(item => item.toBuffer())
+      {{/if}}
       return Buffer.concat(bufs)
     {{/if}}
   }
