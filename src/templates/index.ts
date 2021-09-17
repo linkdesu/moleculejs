@@ -15,5 +15,5 @@ export {
   struct,
   vector,
   table,
-  option,
+  option
 }

@@ -3,10 +3,10 @@ import { isNil, isEmpty } from 'lodash'
 import { promises as fs } from 'fs'
 import * as path from 'path'
 import { exec } from 'child_process'
-import { ESLint } from 'eslint'
 import * as download from 'download'
 import * as ora from 'ora'
-import { inspect } from 'util'
+import * as prettier from 'prettier'
+// import { inspect } from 'util'
 
 import * as util from './util'
 import { Template } from './template'
@@ -109,7 +109,7 @@ class MoleculeJS extends Command {
         const tasks: Array<Promise<AST>> = []
         const template = new Template()
         for (const file of schemaFiles) {
-          const task: Promise<AST> = new Promise((resolve, reject) => {
+          const task: Promise<AST> = new Promise((resolve) => {
             const filepath = path.join(inputDir, file)
             exec(`${moleculec} --language - --schema-file ${filepath} --format json`, (err, stdout, stderr) => {
               if (!isNil(err)) {
@@ -158,19 +158,30 @@ class MoleculeJS extends Command {
           })
         }
 
-        // Initialize eslint for formatting generated codes
-        const eslint = new ESLint({ fix: true, overrideConfigFile: path.join(path.dirname(__dirname), '.eslintrc.js') })
+        const tmpPath = path.join(path.dirname(__dirname), 'tmp')
+        try {
+          await fs.mkdir(tmpPath, { recursive: true })
+        } catch (e) {
+          this.error(`Can not ensure temporary directory ${tmpPath} writable: ${e.toString() as string}`, { exit: 2 })
+        }
 
         if (!isNil(outputPackage)) {
           // TODO
         } else if (!isNil(outputFiles)) {
           await Promise.all(codes.map(async ({ filename, code }) => {
             const filepath = path.join(outputFiles, filename + '.ts')
+            // const tmpFilepath = path.join(tmpPath, filename + '.ts')
             try {
+              code = prettier.format(code, {
+                parser: 'babel-ts',
+                tabWidth: 2,
+                printWidth: 120,
+                singleQuote: true,
+                trailingComma: 'none',
+                bracketSpacing: true,
+                semi: false
+              })
               await fs.writeFile(filepath, code)
-              // Format generated codes with eslint
-              const results = await eslint.lintFiles(filepath)
-              await ESLint.outputFixes(results)
             } catch (e) {
               this.error(`Write code to file ${filepath} failed: ${e.toString() as string}`, { exit: 2 })
             }
