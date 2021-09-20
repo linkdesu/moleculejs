@@ -14,7 +14,7 @@ export class {{ name }} extends Entity {
     {{#if (is-equal item 'Buffer')}}
       return new {{ name }}(buf)
     {{else}}
-      let items = []
+      const items = []
       let start = 0
       for (let i = 0; i < {{ name }}.count; i++) {
         start = i * {{item}}.size

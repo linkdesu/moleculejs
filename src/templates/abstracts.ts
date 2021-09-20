@@ -25,7 +25,7 @@ export abstract class OptionEntity<T> {
   abstract isNone (): boolean
 
   toHex (): string {
-    let buf = this.toBuffer()
+    const buf = this.toBuffer()
     return buf != null ? buf.toString('hex') : ''
   }
 }

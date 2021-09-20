@@ -29,7 +29,7 @@ export class {{ name }} extends Entity {
   }
 
   get size (): number {
-    let headerLength = uint32Length + uint32Length * {{ fields.length }}
+    const headerLength = uint32Length + uint32Length * {{ fields.length }}
     let bodyLength = 0
     {{#each fields}}
       {{#if (is-equal type 'Buffer')}}
@@ -43,7 +43,7 @@ export class {{ name }} extends Entity {
 
   get offsets (): number[] {
     let start = uint32Length * (1 + {{fields.length}})
-    let offsets: number[] = []
+    const offsets: number[] = []
 
     {{#each fields}}
     offsets.push(start)
@@ -64,10 +64,11 @@ export class {{ name }} extends Entity {
   set {{ name }} (val: {{type}}) {
     this._{{ name }} = val
   }
+
   {{/each}}
 
   toBuffer (): Buffer {
-    let header = Buffer.alloc(uint32Length * (1 + {{fields.length}}))
+    const header = Buffer.alloc(uint32Length * (1 + {{fields.length}}))
     header.writeUInt32LE(this.size)
     let start = uint32Length
     this.offsets.forEach(item => {
@@ -75,7 +76,7 @@ export class {{ name }} extends Entity {
       start += uint32Length
     })
 
-    let bufs = []
+    const bufs = []
     {{#each fields}}
       {{#if (is-equal type 'Buffer')}}
         bufs.push(this._{{ name }})
@@ -92,7 +93,7 @@ export class {{ name }} extends Entity {
   }
 
   toRawData (): Buffer {
-    let bufs = [
+    const bufs = [
       {{#each fields}}
         {{#if (is-equal type 'Buffer')}}
           this._{{ name }},

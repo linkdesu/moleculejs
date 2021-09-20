@@ -5,7 +5,8 @@ import * as path from 'path'
 import { exec } from 'child_process'
 import * as download from 'download'
 import * as ora from 'ora'
-import * as prettier from 'prettier'
+// @ts-ignore
+import * as prettier from 'prettierx'
 // import { inspect } from 'util'
 
 import * as util from './util'
@@ -173,12 +174,13 @@ class MoleculeJS extends Command {
             // const tmpFilepath = path.join(tmpPath, filename + '.ts')
             try {
               code = prettier.format(code, {
-                parser: 'babel-ts',
+                parser: 'typescript',
                 tabWidth: 2,
                 printWidth: 120,
                 singleQuote: true,
                 trailingComma: 'none',
                 bracketSpacing: true,
+                spaceBeforeFunctionParen: true,
                 semi: false
               })
               await fs.writeFile(filepath, code)

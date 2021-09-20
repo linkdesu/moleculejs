@@ -49,7 +49,7 @@ export class {{ name }} extends Entity {
   }
 
   toRawData (): Buffer {
-    let bufs = [
+    const bufs = [
       {{#each fields}}
         {{#if (is-equal type 'Buffer')}}
           this._{{ name }},
