@@ -16,7 +16,12 @@ export class {{ name }} extends Entity {
             start = uint32Length + i * {{item}}.size
             items.push({{item}}.fromBuffer(buf.slice(start, start + {{item}}.size)))
           }
-          return new {{ name }}(items)
+
+          const entity = new {{ name }}(items)
+          if (!entity.verify(buf)) {
+            throw new Error('Invalid binary data')
+          }
+          return entity
         {{/if}}
       } else {
         {{#if (is-equal item 'Buffer')}}
@@ -40,7 +45,12 @@ export class {{ name }} extends Entity {
             items.push( {{item}}.fromBuffer(buf.slice(start, end)) )
           }
         }
-        return new {{ name }}(items)
+
+        const entity = new {{ name }}(items)
+        if (!entity.verify(buf)) {
+          throw new Error('Invalid binary data')
+        }
+        return entity
       } else {
         return new {{ name }}([])
       }

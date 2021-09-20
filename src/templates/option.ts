@@ -10,7 +10,11 @@ export class {{ name }} extends OptionEntity<{{ item }}> {
       {{#if (is-equal item 'Buffer')}}
         return new {{ name }}(buf)
       {{else}}
-        return new {{ name }}({{ item }}.fromBuffer(buf))
+        const entity = new {{ name }}({{ item }}.fromBuffer(buf))
+        if (!entity.verify(buf)) {
+          throw new Error('Invalid binary data')
+        }
+        return entity
       {{/if}}
     }
   }

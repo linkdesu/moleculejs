@@ -10,7 +10,12 @@ export class {{ name }} extends Entity {
     }
 
     {{{table-of-fields 'buf' fields}}}
-    return new {{ name }}(fields)
+
+    const entity = new {{ name }}(fields)
+    if (!entity.verify(buf)) {
+      throw new Error('Invalid binary data')
+    }
+    return entity
   }
 
   {{#each fields}}
