@@ -1,10 +1,8 @@
-/.nyc_output
-/dist
-/moleculec
-/lib
-/package-lock.json
-/tmp
-node_modules
+node_modules/
+dist/
+moleculec/
+.nyc_output/
 .yarn/
+package-lock.json
 *-debug.log
 *-error.log

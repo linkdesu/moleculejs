@@ -54,6 +54,6 @@ For example: `new` will be rename to `new_` .
 
 - [ ] Add github workflow as ci process.
 - [ ] Implement unit tests from [nervosnetwork/molecule](https://github.com/nervosnetwork/molecule/tree/master/test).
-- [ ] Support customizable eslint configs.
+- [ ] Support customizable prettier configs.
 - [ ] Improve console messages for a better experience.
 - [ ] Support [Union](https://github.com/nervosnetwork/molecule/blob/master/docs/encoding_spec.md#union) data type.
