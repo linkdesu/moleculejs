@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/linkdesu/moleculejs/compare/v1.1.1...v1.2.0) (2021-10-05)
+
+
+### Features
+
+* add simple validation function for decoding functions ([6e8f1fe](https://github.com/linkdesu/moleculejs/commit/6e8f1feee4b8171620c02979ba5cfa25bd4bb3a9))
+* support customize configs of prettierx ([101a20a](https://github.com/linkdesu/moleculejs/commit/101a20abc6113982ebeec7a81afb4f0239a12d8c))
+
 ### [1.1.1](https://github.com/linkdesu/moleculejs/compare/v1.1.0...v1.1.1) (2021-08-26)
 
 

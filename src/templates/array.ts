@@ -11,16 +11,25 @@ export class {{ name }} extends Entity {
       buf = Buffer.alloc({{ name }}.size)
     }
 
+    if (buf.length !== {{ name }}.size) {
+      throw new Error('Invalid binary data')
+    }
+
     {{#if (is-equal item 'Buffer')}}
       return new {{ name }}(buf)
     {{else}}
-      let items = []
+      const items = []
       let start = 0
       for (let i = 0; i < {{ name }}.count; i++) {
         start = i * {{item}}.size
         items.push(new {{item}}(buf.slice(start, start + {{item}}.size)))
       }
-      return new {{ name }}(items)
+
+      const entity = new {{ name }}(items)
+      if (!entity.verify(buf)) {
+        throw new Error('Invalid binary data')
+      }
+      return entity
     {{/if}}
   }
 

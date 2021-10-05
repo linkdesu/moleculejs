@@ -10,13 +10,18 @@ export class {{ name }} extends Entity {
           return new {{ name }}(buf.slice(uint32Length))
         {{else}}
           const count = buf.slice(0, uint32Length).readUInt32LE()
-          let items = []
+          const items = []
           let start = uint32Length
           for (let i = 0; i < count; i++) {
             start = uint32Length + i * {{item}}.size
             items.push({{item}}.fromBuffer(buf.slice(start, start + {{item}}.size)))
           }
-          return new {{ name }}(items)
+
+          const entity = new {{ name }}(items)
+          if (!entity.verify(buf)) {
+            throw new Error('Invalid binary data')
+          }
+          return entity
         {{/if}}
       } else {
         {{#if (is-equal item 'Buffer')}}
@@ -40,7 +45,12 @@ export class {{ name }} extends Entity {
             items.push( {{item}}.fromBuffer(buf.slice(start, end)) )
           }
         }
-        return new {{ name }}(items)
+
+        const entity = new {{ name }}(items)
+        if (!entity.verify(buf)) {
+          throw new Error('Invalid binary data')
+        }
+        return entity
       } else {
         return new {{ name }}([])
       }
@@ -88,7 +98,7 @@ export class {{ name }} extends Entity {
       return []
     {{else}}
       let start = uint32Length * (1 + this.items.length)
-      let offsets: number[] = []
+      const offsets: number[] = []
       this.items.forEach(item => {
         offsets.push(start)
         start += item.size
@@ -99,16 +109,16 @@ export class {{ name }} extends Entity {
 
   toBuffer (): Buffer {
     {{#if (is-equal type 'fixvec')}}
-      let header = Buffer.alloc(uint32Length)
+      const header = Buffer.alloc(uint32Length)
       header.writeUInt32LE(this.items.length)
       {{#if (is-equal item 'Buffer')}}
         return Buffer.concat([header, this.items])
       {{else}}
-        let bufs = this.items.map(item => item.toBuffer())
+        const bufs = this.items.map(item => item.toBuffer())
         return Buffer.concat([header, ...bufs])
       {{/if}}
     {{else}}
-      let header = Buffer.alloc(uint32Length * (1 + this.items.length))
+      const header = Buffer.alloc(uint32Length * (1 + this.items.length))
       header.writeUInt32LE(this.size)
       let start = uint32Length
       this.offsets.forEach(item => {
@@ -117,9 +127,9 @@ export class {{ name }} extends Entity {
       })
 
       {{#if (is-equal is_option true)}}
-      let bufs = this.items.map(item => item.toBuffer()).filter(item => item != null) as Buffer[]
+      const bufs = this.items.map(item => item.toBuffer()).filter(item => item != null) as Buffer[]
       {{else}}
-      let bufs = this.items.map(item => item.toBuffer())
+      const bufs = this.items.map(item => item.toBuffer())
       {{/if}}
       return Buffer.concat([header, ...bufs])
     {{/if}}
@@ -130,14 +140,14 @@ export class {{ name }} extends Entity {
       {{#if (is-equal item 'Buffer')}}
         return this.items
       {{else}}
-        let bufs = this.items.map(item => item.toBuffer())
+        const bufs = this.items.map(item => item.toBuffer())
         return Buffer.concat(bufs)
       {{/if}}
     {{else}}
       {{#if (is-equal is_option true)}}
-      let bufs = this.items.map(item => item.toBuffer()).filter(item => item != null) as Buffer[]
+      const bufs = this.items.map(item => item.toBuffer()).filter(item => item != null) as Buffer[]
       {{else}}
-      let bufs = this.items.map(item => item.toBuffer())
+      const bufs = this.items.map(item => item.toBuffer())
       {{/if}}
       return Buffer.concat(bufs)
     {{/if}}

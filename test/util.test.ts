@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { inspect } from 'util'
+// import { inspect } from 'util'
 
 import * as util from '../src/util'
 
@@ -158,13 +158,53 @@ describe('util', () => {
         items: ['Buffer', 'Bytes', 'StructA', 'TableA']
       })
     })
+
+    it('should suffix ts keywords with underline', () => {
+      const structToken: StructToken = {
+        type: 'struct',
+        name: 'StructA',
+        fields: [
+          { name: 'new', type: 'byte' },
+          { name: 'switch', type: 'byte' }
+        ]
+      }
+
+      const tableToken: TableToken = {
+        type: 'table',
+        name: 'TableA',
+        fields: [
+          { name: 'new', type: 'byte' },
+          { name: 'switch', type: 'byte' }
+        ]
+      }
+
+      util.improveTypeForToken(structToken)
+      expect(structToken).to.eql({
+        type: 'struct',
+        name: 'StructA',
+        fields: [
+          { name: 'new_', type: 'Buffer' },
+          { name: 'switch_', type: 'Buffer' }
+        ]
+      })
+
+      util.improveTypeForToken(tableToken)
+      expect(tableToken).to.eql({
+        type: 'table',
+        name: 'TableA',
+        fields: [
+          { name: 'new_', type: 'Buffer' },
+          { name: 'switch_', type: 'Buffer' }
+        ]
+      })
+    })
   })
 
   describe('improveTypeForAST', () => {
     const trees: AST[] = [
       {
         namespace: 'struct',
-        imports: [ { name: 'array', paths: [], path_supers: 0 } ],
+        imports: [{ name: 'array', paths: [], path_supers: 0 }],
         declarations: [
           {
             type: 'struct',
@@ -202,7 +242,7 @@ describe('util', () => {
       },
       {
         namespace: 'vector',
-        imports: [ { name: 'array', paths: [], path_supers: 0 } ],
+        imports: [{ name: 'array', paths: [], path_supers: 0 }],
         declarations: [
           { type: 'fixvec', name: 'Bytes', item: 'byte' },
           { type: 'fixvec', name: 'Byte3Vec', item: 'Byte3' },
@@ -213,7 +253,7 @@ describe('util', () => {
       },
       {
         namespace: 'option',
-        imports: [ { name: 'vector', paths: [], path_supers: 0 } ],
+        imports: [{ name: 'vector', paths: [], path_supers: 0 }],
         declarations: [
           { type: 'option', name: 'ByteOpt', item: 'byte' },
           { type: 'option', name: 'Byte3Opt', item: 'Byte3' },
@@ -249,7 +289,7 @@ describe('util', () => {
       },
       {
         namespace: 'vector_opt',
-        imports: [ { name: 'option', paths: [], path_supers: 0 } ],
+        imports: [{ name: 'option', paths: [], path_supers: 0 }],
         declarations: [
           { type: 'dynvec', name: 'BytesOptVec', item: 'BytesOpt' },
           { type: 'option', name: 'BytesOpt', item: 'Bytes', imported_depth: 1 }
@@ -257,7 +297,7 @@ describe('util', () => {
       },
       {
         namespace: 'table_opt',
-        imports: [ { name: 'option', paths: [], path_supers: 0 } ],
+        imports: [{ name: 'option', paths: [], path_supers: 0 }],
         declarations: [
           {
             type: 'table',
@@ -272,7 +312,7 @@ describe('util', () => {
           { type: 'option', name: 'ByteOpt', item: 'Bytes', imported_depth: 1 },
           { type: 'option', name: 'BytesOpt', item: 'Bytes', imported_depth: 1 }
         ]
-      },
+      }
     ]
 
     it('should add fields for details of imported types', () => {
@@ -282,7 +322,7 @@ describe('util', () => {
 
     it('should only import types used', () => {
       util.improveTypeForAST(trees)
-      expect(trees[2].imports[0]).to.eql({ name: 'array', paths: [], path_supers: 0, types: [ 'Byte3' ] })
+      expect(trees[2].imports[0]).to.eql({ name: 'array', paths: [], path_supers: 0, types: ['Byte3'] })
     })
 
     it('should improve imports of structA correctly', () => {

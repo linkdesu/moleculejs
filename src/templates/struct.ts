@@ -12,7 +12,12 @@ export class {{ name }} extends Entity {
     }
 
     {{{struct-of-fields 'buf' fields}}}
-    return new {{ name }}(fields)
+
+    const entity = new {{ name }}(fields)
+    if (!entity.verify(buf)) {
+      throw new Error('Invalid binary data')
+    }
+    return entity
   }
 
   {{#each fields}}
@@ -49,7 +54,7 @@ export class {{ name }} extends Entity {
   }
 
   toRawData (): Buffer {
-    let bufs = [
+    const bufs = [
       {{#each fields}}
         {{#if (is-equal type 'Buffer')}}
           this._{{ name }},

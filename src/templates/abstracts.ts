@@ -10,6 +10,10 @@ export abstract class Entity {
   abstract toRawData (): Buffer
   abstract toString (): string
 
+  verify (buf: Buffer): boolean {
+    return this.toBuffer().equals(buf)
+  }
+
   toHex (): string {
     return this.toBuffer().toString('hex')
   }
@@ -24,8 +28,17 @@ export abstract class OptionEntity<T> {
   abstract isSome (): boolean
   abstract isNone (): boolean
 
+  verify (buf: Buffer): boolean {
+    const current_buf = this.toBuffer()
+    if (current_buf == null) {
+      return false
+    } else {
+      return current_buf.equals(buf)
+    }
+  }
+
   toHex (): string {
-    let buf = this.toBuffer()
+    const buf = this.toBuffer()
     return buf != null ? buf.toString('hex') : ''
   }
 }
