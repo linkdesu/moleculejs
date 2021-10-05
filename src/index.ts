@@ -5,7 +5,6 @@ import * as path from 'path'
 import { exec } from 'child_process'
 import * as download from 'download'
 import * as ora from 'ora'
-// @ts-ignore
 import * as prettier from 'prettierx'
 // import { inspect } from 'util'
 
@@ -28,8 +27,9 @@ class MoleculeJS extends Command {
     'download-from': flags.string({ description: 'Download the prebuilt moleculec binary base on your platform.' }),
     moleculec: flags.string({ char: 'm', description: 'The absolute path of executable moleculec, if it not provided the internal binary will be used.' }),
     'input-dir': flags.string({ char: 'i', description: 'Specifies a directory which contains molecule schema files.' }),
-    'output-package': flags.string({ char: 'p', exclusive: ['output-files'], description: 'Specifies a directory to store the generated typescript package.' }),
-    'output-files': flags.string({ char: 'f', exclusive: ['output-package'], description: 'Specifies a directory to store the generated typescript files.' })
+    // 'output-package': flags.string({ char: 'p', exclusive: ['output-files'], description: 'Specifies a directory to store the generated typescript package.' }),
+    'output-files': flags.string({ char: 'f', exclusive: ['output-package'], description: 'Specifies a directory to store the generated typescript files.' }),
+    prettierx: flags.string({ char: 'x', description: 'Customize prettierx configs, support JSON in string or file.' })
   }
 
   async run (): Promise<void> {
@@ -54,10 +54,13 @@ class MoleculeJS extends Command {
           this.error(e, { exit: 6 })
         }
       } else {
+        // Compile molecule schema files.
         const moleculec = flags.moleculec ?? util.getMoleculec()
         const inputDir = flags['input-dir']
-        const outputPackage = flags['output-package']
+        // const outputPackage = flags['output-package']
+        const outputPackage = ''
         const outputFiles = flags['output-files']
+        const prettierxConfig = flags.prettierx
 
         if (flags.test) {
           // TODO improve testing hooks
@@ -103,6 +106,34 @@ class MoleculeJS extends Command {
           this.error('One of --output-package, -p and --output-files, -f is required.', { exit: 3 })
         }
 
+        const defaultFormat = {
+          parser: 'typescript',
+          tabWidth: 2,
+          printWidth: 120,
+          singleQuote: true,
+          trailingComma: 'none',
+          bracketSpacing: true,
+          spaceBeforeFunctionParen: true,
+          semi: false
+        }
+        let format: any
+        if (!isNil(prettierxConfig)) {
+          if (prettierxConfig.startsWith('{')) {
+            try {
+              format = Object.assign(defaultFormat, JSON.parse(prettierxConfig))
+            } catch (e) {
+              this.error('The JSON of prettierx config is invalid.', { exit: 4 })
+            }
+          } else {
+            try {
+              const data = await fs.readFile(prettierxConfig, { encoding: 'utf8' })
+              format = Object.assign(defaultFormat, JSON.parse(data))
+            } catch (e) {
+              this.error(`Can not read from ${prettierxConfig} or its content is not valid JSON.`, { exit: 4 })
+            }
+          }
+        }
+
         spinner.succeed('Found schema files and output directory is writable.')
         spinner.start('Start compiling schema files ...')
 
@@ -114,7 +145,7 @@ class MoleculeJS extends Command {
             const filepath = path.join(inputDir, file)
             exec(`${moleculec} --language - --schema-file ${filepath} --format json`, (err, stdout, stderr) => {
               if (!isNil(err)) {
-                this.error('Failed on moleculec execution: ' + stderr, { exit: 4 })
+                this.error('Failed on moleculec execution: ' + stderr, { exit: 98 })
               }
 
               // It is not a serious abstract syntax tree, but it is just like it, so I named it ast here.
@@ -122,7 +153,7 @@ class MoleculeJS extends Command {
               try {
                 ast = JSON.parse(stdout)
               } catch (e) {
-                this.error(`Failed on parsing the return of moleculec: ${e.toString() as string}`, { exit: 4 })
+                this.error(`Failed on parsing the return of moleculec: ${e.toString() as string}`, { exit: 50 })
               }
 
               // this.log(`Compile file ${filepath} successfully!`)
@@ -159,33 +190,16 @@ class MoleculeJS extends Command {
           })
         }
 
-        const tmpPath = path.join(path.dirname(__dirname), 'tmp')
-        try {
-          await fs.mkdir(tmpPath, { recursive: true })
-        } catch (e) {
-          this.error(`Can not ensure temporary directory ${tmpPath} writable: ${e.toString() as string}`, { exit: 2 })
-        }
-
         if (!isNil(outputPackage)) {
           // TODO
         } else if (!isNil(outputFiles)) {
           await Promise.all(codes.map(async ({ filename, code }) => {
             const filepath = path.join(outputFiles, filename + '.ts')
-            // const tmpFilepath = path.join(tmpPath, filename + '.ts')
             try {
-              code = prettier.format(code, {
-                parser: 'typescript',
-                tabWidth: 2,
-                printWidth: 120,
-                singleQuote: true,
-                trailingComma: 'none',
-                bracketSpacing: true,
-                spaceBeforeFunctionParen: true,
-                semi: false
-              })
+              code = prettier.format(code, format)
               await fs.writeFile(filepath, code)
             } catch (e) {
-              this.error(`Write code to file ${filepath} failed: ${e.toString() as string}`, { exit: 2 })
+              this.error(`Write code to file ${filepath} failed: ${e.toString() as string}`, { exit: 99 })
             }
           }))
 

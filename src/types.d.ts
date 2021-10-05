@@ -1,4 +1,3 @@
-
 type AnyToken = ArrayToken | StructToken | VectorToken | TableToken | OptionToken | UnionToken
 
 interface AST {
@@ -51,4 +50,8 @@ interface OptionToken extends Token {
 
 interface UnionToken extends Token {
   items: string[]
+}
+
+declare module 'prettierx' {
+  export function format (source: string, options?: any): string
 }
